@@ -25,8 +25,8 @@ contract KingsomniProfile is Ownable {
     uint256 public baseUpgradeCost = 0.05 ether; // 0.05 STT
     uint256 public unlockSkillCost = 0.1 ether;  // 0.1 STT
 
-    event StatUpgraded(address indexed player, uint8 statType, uint32 newLevel);
-    event SkillUnlocked(address indexed player, uint8 skillType);
+    event StatUpgraded(address indexed player, uint8 statType, uint32 newLevel, uint256 cost);
+    event SkillUnlocked(address indexed player, uint8 skillType, uint256 cost);
 
     constructor(address treasuryAddress) Ownable(msg.sender) {
         treasury = IKingsomniTreasury(treasuryAddress);
@@ -69,7 +69,7 @@ contract KingsomniProfile is Ownable {
         else if (statType == 4) stats.healLevel += 1;
         else if (statType == 5) stats.damageBoostLevel += 1;
 
-        emit StatUpgraded(msg.sender, statType, currentLevel + 1);
+        emit StatUpgraded(msg.sender, statType, currentLevel + 1, cost);
     }
 
     /// @notice Unlock a skill
@@ -92,7 +92,7 @@ contract KingsomniProfile is Ownable {
         }
 
         treasury.deposit{value: msg.value}();
-        emit SkillUnlocked(msg.sender, skillType);
+        emit SkillUnlocked(msg.sender, skillType, unlockSkillCost);
     }
 
     function getPlayerProfile(address player) external view returns (PlayerStats memory) {

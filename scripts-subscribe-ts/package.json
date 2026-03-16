@@ -1,0 +1,16 @@
+{
+  "name": "kingsomni-reactivity-scripts",
+  "version": "1.0.0",
+  "description": "Scripts for Somnia Reactivity orchestration",
+  "type": "module",
+  "scripts": {
+    "setup": "node --loader ts-node/esm setup-subscription.ts"
+  },
+  "dependencies": {
+    "@somnia-chain/reactivity": "^0.1.0",
+    "viem": "^2.21.0",
+    "dotenv": "^16.4.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}
