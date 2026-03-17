@@ -58,11 +58,11 @@ contract KingsomniEventHandler is SomniaEventHandler {
             // Check real-time balance of Treasury on-chain
             uint256 currentBalance = treasuryAddress.balance;
             
-            // Threshold for Global Boss: 100 STT (Adjustable)
-            if (currentBalance >= 100 ether) {
+            // Threshold for Global Boss: 20 STT (Adjustable)
+            if (currentBalance >= 20 ether) {
                 // Activate Global Boss across all game sessions autonomously
                 game.toggleGlobalBoss(true);
-            } else if (currentBalance < 50 ether) {
+            } else if (currentBalance < 10 ether) {
                 // Deactivate if balance drops (e.g., after many claims)
                 game.toggleGlobalBoss(false);
             }
