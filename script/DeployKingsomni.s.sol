@@ -13,7 +13,7 @@ contract DeployKingsomni is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         address backendSigner = vm.envAddress("BACKEND_SIGNER_ADDRESS");
         address deployerAddress = vm.addr(deployerPrivateKey);
-        
+
         vm.startBroadcast(deployerPrivateKey);
 
         // --- PHASE 1: DEPLOYMENT ---
@@ -32,11 +32,7 @@ contract DeployKingsomni is Script {
         console.log("KingsomniGame deployed at:", address(game));
 
         // 4. Deploy EventHandler (The Reactivity Brain)
-        KingsomniEventHandler handler = new KingsomniEventHandler(
-            address(game),
-            address(profile),
-            address(treasury)
-        );
+        KingsomniEventHandler handler = new KingsomniEventHandler(address(game), address(profile), address(treasury));
         console.log("KingsomniEventHandler deployed at:", address(handler));
 
         // --- PHASE 2: ROLE CONFIGURATION ---
@@ -54,7 +50,7 @@ contract DeployKingsomni is Script {
         console.log("Granted REACTIVITY_ROLE to EventHandler");
 
         // --- PHASE 3: SUBSCRIPTION FUNDING (Optional Tip) ---
-        // Note: You still need to manually create the subscription via Somnia SDK 
+        // Note: You still need to manually create the subscription via Somnia SDK
         // using a wallet with at least 32 SOM balance.
 
         vm.stopBroadcast();

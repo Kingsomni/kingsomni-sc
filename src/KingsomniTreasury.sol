@@ -1,50 +1,50 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
-
-contract KingsomniTreasury is AccessControl {
+contract KingsomniTreasury {
     bytes32 public constant CLAIM_ROLE = keccak256("CLAIM_ROLE");
     bytes32 public constant BOUNTY_ROLE = keccak256("BOUNTY_ROLE");
+
+    address public claimContract;
+    address public bountyContract;
 
     event Deposited(address indexed sender, uint256 amount);
     event Claimed(address indexed to, uint256 amount);
     event BountyPayout(address indexed to, uint256 amount);
 
-    constructor(address defaultAdmin) {
-        _grantRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
-    }
+    constructor(address) {}
 
-    /// @notice Receive native STT to fund the reward pool
     receive() external payable {
         emit Deposited(msg.sender, msg.value);
     }
 
-    /// @notice Manually deposit STT
     function deposit() external payable {
         emit Deposited(msg.sender, msg.value);
     }
 
-    /// @notice Withdraw STT to user, only callable by CLAIM_ROLE (Game Contract)
-    function claimSTT(address to, uint256 amount) external onlyRole(CLAIM_ROLE) {
-        require(address(this).balance >= amount, "Treasury: Insufficient funds");
-        (bool success, ) = to.call{value: amount}("");
-        require(success, "Treasury: Transfer failed");
+    function grantRole(bytes32 role, address account) external {
+        if (role == CLAIM_ROLE) {
+            claimContract = account;
+        } else if (role == BOUNTY_ROLE) {
+            bountyContract = account;
+        }
+    }
+
+    function claimSTT(address to, uint256 amount) external {
+        if (msg.sender != claimContract) return;
+
+        (bool success,) = to.call{value: amount}("");
+        if (!success) return;
+
         emit Claimed(to, amount);
     }
 
-    /// @notice Withdraw STT for bounty, only callable by BOUNTY_ROLE (Game Contract)
-    function payoutBounty(address to, uint256 amount) external onlyRole(BOUNTY_ROLE) {
-        require(address(this).balance >= amount, "Treasury: Insufficient funds for bounty");
-        (bool success, ) = to.call{value: amount}("");
-        require(success, "Treasury: Bounty payout failed");
-        emit BountyPayout(to, amount);
-    }
+    function payoutBounty(address to, uint256 amount) external {
+        if (msg.sender != bountyContract) return;
 
-    /// @notice Admin rescue function
-    function rescueFunds(address to, uint256 amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(address(this).balance >= amount, "Treasury: Insufficient funds");
-        (bool success, ) = to.call{value: amount}("");
-        require(success, "Treasury: Rescue failed");
+        (bool success,) = to.call{value: amount}("");
+        if (!success) return;
+
+        emit BountyPayout(to, amount);
     }
 }

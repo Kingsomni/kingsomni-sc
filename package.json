@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@openzeppelin/contracts": "^4.9.6",
     "@somnia-chain/reactivity-contracts": "^0.1.6"
   }
 }
