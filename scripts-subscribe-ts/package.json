@@ -4,7 +4,10 @@
   "description": "Scripts for Somnia Reactivity orchestration",
   "type": "module",
   "scripts": {
-    "setup": "node --loader ts-node/esm setup-subscription.ts"
+    "setup": "node setup-subscription.mjs",
+    "list-ids": "node list-subscription-ids.mjs",
+    "check": "node check-subscriptions.mjs",
+    "unsubscribe": "node unsubscribe-subscriptions.mjs"
   },
   "dependencies": {
     "@somnia-chain/reactivity": "^0.1.0",
