@@ -6,13 +6,14 @@ import "../src/KingsomniTreasury.sol";
 import "../src/KingsomniProfile.sol";
 import "../src/KingsomniGame.sol";
 import "../src/KingsomniEventHandler.sol";
+import "../src/KingsomniLeaderboard.sol";
 
 contract DeployKingsomni is Script {
     function run() external {
         // Load environment variables
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        address backendSigner = vm.envAddress("BACKEND_SIGNER_ADDRESS");
         address deployerAddress = vm.addr(deployerPrivateKey);
+        address backendSigner = vm.envOr("BACKEND_SIGNER_ADDRESS", deployerAddress);
 
         vm.startBroadcast(deployerPrivateKey);
 
@@ -34,6 +35,10 @@ contract DeployKingsomni is Script {
         // 4. Deploy EventHandler (The Reactivity Brain)
         KingsomniEventHandler handler = new KingsomniEventHandler(address(game), address(profile), address(treasury));
         console.log("KingsomniEventHandler deployed at:", address(handler));
+
+        // 5. Deploy dedicated leaderboard (signed submission model)
+        KingsomniLeaderboard leaderboard = new KingsomniLeaderboard(deployerAddress, backendSigner);
+        console.log("KingsomniLeaderboard deployed at:", address(leaderboard));
 
         // --- PHASE 2: ROLE CONFIGURATION ---
 
@@ -61,6 +66,8 @@ contract DeployKingsomni is Script {
         console.log("Profile:", address(profile));
         console.log("Game:", address(game));
         console.log("EventHandler:", address(handler));
+        console.log("Leaderboard:", address(leaderboard));
+        console.log("BackendSigner:", backendSigner);
         console.log("-----------------------------------------");
     }
 }
